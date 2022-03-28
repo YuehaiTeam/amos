@@ -1,13 +1,21 @@
 import { resolve } from 'path'
 import { remove, pathExists, ensureDir, readJson, writeFile } from 'fs-extra'
 import { info } from 'npmlog'
-export const module = resolve(__dirname, '../../')
 
-export const giSource = resolve(module, '.cache/GenshinData')
-export const giTextMap = resolve(giSource, 'TextMap')
+export let module = resolve(__dirname, '../../')
 
-export const aData = resolve(module, 'data')
-export const aTextmap = resolve(aData, 'TextMap')
+export let giSource = resolve(module, '.cache/GenshinData')
+export let giTextMap = resolve(giSource, 'TextMap')
+
+export let aData = resolve(module, 'data')
+export let aTextmap = resolve(aData, 'TextMap')
+
+export function setPaths(giData: string, outData: string) {
+    if (giData) giSource = giData
+    if (outData) aData = outData
+    giTextMap = resolve(giSource, 'TextMap')
+    aTextmap = resolve(aData, 'TextMap')
+}
 
 export async function cleanData() {
     if (await pathExists(aData)) {
