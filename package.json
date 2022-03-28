@@ -21,6 +21,6 @@
         "postinstall": "tsc"
     },
     "bin": {
-        "amos": "./dist/bin"
+        "amos": "dist/bin.js"
     }
 }
