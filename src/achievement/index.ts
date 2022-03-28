@@ -85,6 +85,7 @@ export async function main() {
                 id: a.Id,
                 name: textMap(a.TitleTextMapHash),
                 desc: textMap(a.DescTextMapHash),
+                categoryId: cat.Id,
                 reward: primo,
                 hidden: a.IsShow === 'SHOWTYPE_HIDE',
                 order: a.OrderId,
