@@ -1,0 +1,4 @@
+[submodule ".cache/GenshinData"]
+	path = .cache/GenshinData
+	url = https://github.com/Dimbreath/GenshinData
+	branch = master
