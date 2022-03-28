@@ -29,4 +29,5 @@ export const achievementKeys = {
     3: 'the_heros_journey',
     28: 'the_light_of_day',
     16: 'visitors_on_the_icy_mountain',
+    30: 'chasmlighter',
 } as Record<number, string>
