@@ -10,6 +10,8 @@ export let giTextMap = resolve(giSource, 'TextMap')
 export let aData = resolve(module, 'data')
 export let aTextmap = resolve(aData, 'TextMap')
 
+export let writeFileHook = <P, Q>(file: P, data: Q) => ({ file, data })
+
 export function setPaths(giData: string, outData: string) {
     if (giData) giSource = giData
     if (outData) aData = outData
@@ -35,5 +37,6 @@ export function giObfBinData(sub: string, path: string) {
 }
 export async function aWriteData(module: string, path: string, data: any) {
     await ensureDir(resolve(aData, module))
-    return await writeFile(resolve(aData, module, path + '.json'), JSON.stringify(data))
+    const { file: _file, data: _data } = writeFileHook(resolve(aData, module, path + '.json'), JSON.stringify(data))
+    return await writeFile(_file, _data)
 }
