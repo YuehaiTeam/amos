@@ -39,12 +39,13 @@ export async function main() {
             }
             let postStage = achievements.find((b) => b.PreStageAchievementId && b.PreStageAchievementId === a.Id)
             let task = undefined as Achievement['trigger']['task']
+            let quest = [] as any[]
             async function getTasksFromQuest(questId: number) {
                 let quest0 = null as any
                 try {
                     const quest = await giBinData('QuestBrief', questId.toString())
                     task = task || []
-                    if (task.find((e) => e.questId === questId)) return
+                    if (task.find((e) => e.questId === questId)) return null
                     quest0 = quest
                 } catch (e) {
                     try {
@@ -54,19 +55,11 @@ export async function main() {
                         }
                         const quest = reKey(_quest, keyMap)
                         task = task || []
-                        if (task.find((e) => e.questId === questId)) return
+                        if (task.find((e) => e.questId === questId)) return null
                         quest0 = quest
                     } catch (e) {}
                 }
-                if (quest0) {
-                    task = task || []
-                    task.push({
-                        taskId: quest0.taskID,
-                        questId: quest0.id || questId,
-                        type: quest0.type || '',
-                        name: quest0.titleTextMapHash || '',
-                    })
-                }
+                return quest0
             }
             if (
                 a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_OR' ||
@@ -76,7 +69,17 @@ export async function main() {
                 const triggerList = a.TriggerConfig.ParamList.filter((e) => !!e)[0].split(',')
                 for (const t of triggerList) {
                     const questId = Math.floor(Number(t) / 100)
-                    await getTasksFromQuest(questId)
+                    const quest0 = await getTasksFromQuest(questId)
+                    if (quest0) {
+                        task = task || []
+                        task.push({
+                            taskId: quest0.taskID,
+                            questId: quest0.id || questId,
+                            type: quest0.type || '',
+                            name: quest0.titleTextMapHash || '',
+                        })
+                        quest.push(quest0)
+                    }
                 }
             }
             if (a.TriggerConfig.TriggerType === 'TRIGGER_DAILY_TASK_VAR_EQUAL') {
@@ -95,11 +98,45 @@ export async function main() {
                 }
             }
             if (Array.isArray(task)) {
-                task = task.filter((e) => {
-                    const title = checkTextExist(Number(e.name))
-                    if (!title || title.includes('$HIDDEN')) return false
-                    e.name = textMap(Number(e.name))
-                    return true
+                let index = 0
+                const strips = [] as number[]
+                for (const e of task) {
+                    let title = checkTextExist(Number(e.name))
+                    let quest0 = quest[index]
+                    while (title && title.includes('$HIDDEN')) {
+                        // try to get previous task
+                        e.type = 'H ' + e.type
+                        if (quest0.subQuests) {
+                            // currently only available for deobfuscated quests
+                            const subs = quest0.subQuests.concat([]).sort((a: any, b: any) => a.order - b.order)
+                            const prev = subs[0].acceptCond.find((s: any) => s.type === 'QUEST_COND_STATE_EQUAL')
+                            if (prev) {
+                                const prevId = Math.floor(Number(prev.param[0]) / 100)
+                                quest0 = await getTasksFromQuest(prevId)
+                                title = checkTextExist(Number(quest0.titleTextMapHash))
+                                if (title && !title.includes('$HIDDEN')) {
+                                    e.name = quest0.titleTextMapHash
+                                    title = title
+                                    e.taskId = e.taskId || quest0.taskID
+                                }
+                            } else {
+                                title = ''
+                                break
+                            }
+                        } else {
+                            title = ''
+                            break
+                        }
+                    }
+                    if (!title) {
+                        strips.push(index)
+                    } else {
+                        e.name = textMap(Number(e.name))
+                    }
+                    index++
+                }
+                task = task.filter((e, i) => {
+                    return !strips.includes(i)
                 })
             }
             totalReward += primo
