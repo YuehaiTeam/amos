@@ -19,6 +19,7 @@ export async function main() {
     info('ACH', 'Found', achievements.length, 'achievements and', cats.length, 'categories')
     const finalData = [] as AchievementCategory[]
     for (const cat of cats) {
+        let totalReward = 0
         const catAchs = achievements.filter(
             (a) =>
                 !deprecatedIds.includes(a.Id) &&
@@ -81,6 +82,7 @@ export async function main() {
                     })
                 }
             }
+            totalReward += primo
             achs.push({
                 id: a.Id,
                 name: textMap(a.TitleTextMapHash),
@@ -103,6 +105,7 @@ export async function main() {
             name: textMap(cat.NameTextMapHash),
             order: cat.OrderId,
             achievements: achs,
+            totalReward,
         })
     }
     await aWriteData('achievements', 'index', finalData)

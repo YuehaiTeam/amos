@@ -23,5 +23,6 @@ export interface AchievementCategory {
     key: string
     name: number
     order: number
+    totalReward: number
     achievements: Achievement[]
 }
