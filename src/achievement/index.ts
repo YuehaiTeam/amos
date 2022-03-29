@@ -1,10 +1,11 @@
 import { info } from 'npmlog'
 import { achievementKeys } from './mapping'
 import { giExcelData, giBinData, giObfBinData, aWriteData } from '../utils/source'
-import { giReward, ITEM_PRIMOGEM } from '../typings/giReward'
 import { Achievement, AchievementCategory } from './typing'
+import { giDailyTask } from '../typings/giTask'
+import { giReward, ITEM_PRIMOGEM } from '../typings/giReward'
 import { giAchievement, giAchievementGoal } from '../typings/giAchievement'
-import { textMap, checkTextExist, loadCachedText, exportTextMap, newTextMap } from '../utils/textMap'
+import { textMap, checkTextExist, loadCachedText } from '../utils/textMap'
 import { keyPair, reKey } from '../utils/bruteforceJson'
 const deprecatedIds = [
     // dreprecated
@@ -16,6 +17,7 @@ export async function main() {
     const rewards = (await giExcelData('Reward')) as giReward[]
     const achievements = (await giExcelData('Achievement')) as giAchievement[]
     const cats = (await giExcelData('AchievementGoal')) as giAchievementGoal[]
+    const dailyTask = (await giExcelData('DailyTask')) as giDailyTask[]
     info('ACH', 'Found', achievements.length, 'achievements and', cats.length, 'categories')
     const finalData = [] as AchievementCategory[]
     for (const cat of cats) {
@@ -37,50 +39,68 @@ export async function main() {
             }
             let postStage = achievements.find((b) => b.PreStageAchievementId && b.PreStageAchievementId === a.Id)
             let task = undefined as Achievement['trigger']['task']
+            async function getTasksFromQuest(questId: number) {
+                let quest0 = null as any
+                try {
+                    const quest = await giBinData('QuestBrief', questId.toString())
+                    task = task || []
+                    if (task.find((e) => e.questId === questId)) return
+                    quest0 = quest
+                } catch (e) {
+                    try {
+                        const _quest = await giObfBinData('QuestBrief', questId.toString())
+                        if (Object.keys(keyMap).length <= 0) {
+                            keyMap = await questKeyPair()
+                        }
+                        const quest = reKey(_quest, keyMap)
+                        task = task || []
+                        if (task.find((e) => e.questId === questId)) return
+                        quest0 = quest
+                    } catch (e) {}
+                }
+                if (quest0) {
+                    task = task || []
+                    task.push({
+                        taskId: quest0.taskID,
+                        questId: quest0.id || questId,
+                        type: quest0.type || '',
+                        name: quest0.titleTextMapHash || '',
+                    })
+                }
+            }
             if (
                 a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_OR' ||
                 a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_AND'
             ) {
-                // check for daily quest
+                // check for quest
                 const triggerList = a.TriggerConfig.ParamList.filter((e) => !!e)[0].split(',')
                 for (const t of triggerList) {
                     const questId = Math.floor(Number(t) / 100)
-                    try {
-                        const quest = await giBinData('QuestBrief', questId.toString())
-                        task = task || []
-                        if (task.find((e) => e.questId === questId)) continue
-                        task.push({
-                            taskId: quest.taskID,
-                            questId: quest.id,
-                            type: quest.type,
-                            name: quest.titleTextMapHash || '',
-                        })
-                    } catch (e) {
-                        try {
-                            const _quest = await giObfBinData('QuestBrief', questId.toString())
-                            if (Object.keys(keyMap).length <= 0) {
-                                keyMap = await questKeyPair()
-                            }
-                            const quest = reKey(_quest, keyMap)
-                            task = task || []
-                            if (task.find((e) => e.questId === questId)) continue
-                            task.push({
-                                taskId: quest.taskID,
-                                questId: questId,
-                                type: quest.type || '',
-                                name: quest.titleTextMapHash || '',
-                            })
-                        } catch (e) {}
-                    }
+                    await getTasksFromQuest(questId)
                 }
-                if (Array.isArray(task)) {
-                    task = task.filter((e) => {
-                        const title = checkTextExist(Number(e.name))
-                        if (!title || title.includes('$HIDDEN')) return false
-                        e.name = textMap(Number(e.name))
-                        return true
+            }
+            if (a.TriggerConfig.TriggerType === 'TRIGGER_DAILY_TASK_VAR_EQUAL') {
+                // check for daily quest
+                const triggerList = a.TriggerConfig.ParamList.filter((e) => !!e)[0].split(',')
+                const taskId = Number(triggerList[0])
+                const dtask = dailyTask.find((e) => e.ID === taskId)
+                if (dtask) {
+                    task = task || []
+                    task.push({
+                        taskId: taskId,
+                        questId: dtask.QuestId,
+                        type: 'IQ',
+                        name: dtask.TitleTextMapHash || 0,
                     })
                 }
+            }
+            if (Array.isArray(task)) {
+                task = task.filter((e) => {
+                    const title = checkTextExist(Number(e.name))
+                    if (!title || title.includes('$HIDDEN')) return false
+                    e.name = textMap(Number(e.name))
+                    return true
+                })
             }
             totalReward += primo
             achs.push({
