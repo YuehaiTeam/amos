@@ -9,7 +9,7 @@ import { textMap, checkTextExist, loadCachedText } from '../utils/textMap'
 import { keyPair, reKey } from '../utils/bruteforceJson'
 const deprecatedIds = [
     // dreprecated
-    84027, 82011, 82016, 82018, 84517, 84521, 81006, 81007, 81008, 81009, 81011, 81012, 81013,
+    84027, 82011, 82016, 82018, 84517, 84521, 81006, 81007, 81008, 81009, 81011, 81012, 81013, 81219,
 ]
 export async function main() {
     let keyMap = {} as Record<string, string>
@@ -37,7 +37,10 @@ export async function main() {
                     if (r.ItemId === ITEM_PRIMOGEM) primo = r.ItemCount
                 })
             }
-            let postStage = achievements.find((b) => b.PreStageAchievementId && b.PreStageAchievementId === a.Id && checkTextExist(b.TitleTextMapHash))
+            let postStage = achievements.find(
+                (b) =>
+                    b.PreStageAchievementId && b.PreStageAchievementId === a.Id && checkTextExist(b.TitleTextMapHash),
+            )
             let task = undefined as Achievement['trigger']['task']
             let quest = [] as any[]
             async function getTasksFromQuest(questId: number) {
