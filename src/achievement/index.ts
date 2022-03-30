@@ -37,7 +37,7 @@ export async function main() {
                     if (r.ItemId === ITEM_PRIMOGEM) primo = r.ItemCount
                 })
             }
-            let postStage = achievements.find((b) => b.PreStageAchievementId && b.PreStageAchievementId === a.Id)
+            let postStage = achievements.find((b) => b.PreStageAchievementId && b.PreStageAchievementId === a.Id && checkTextExist(b.TitleTextMapHash))
             let task = undefined as Achievement['trigger']['task']
             let quest = [] as any[]
             async function getTasksFromQuest(questId: number) {
