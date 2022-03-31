@@ -164,7 +164,7 @@ export async function main() {
             key: achievementKeys[cat.Id || 0] || '',
             name: textMap(cat.NameTextMapHash),
             order: cat.OrderId,
-            achievements: achs,
+            achievements: achs.sort((a, b) => a.order - b.order),
             totalReward,
         })
     }
