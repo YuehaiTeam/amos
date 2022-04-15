@@ -1,6 +1,6 @@
 import { giAvatar, giAvatarCodex } from './../typings/giAvatar'
 import { aWriteData, giExcelData } from '../utils/source'
-import { loadCachedText, textMap } from '../utils/textMap'
+import { loadCachedText, textMap, textMapCustom } from '../utils/textMap'
 import { Character } from './typing'
 import { info } from 'npmlog'
 
@@ -21,6 +21,8 @@ export async function main() {
             weapon: c.WeaponType.replace('WEAPON_', ''),
             quailty: c.QualityType.replace('QUALITY_', ''),
         } as Character
+        if (c.Id === 10000005) textMapCustom(ch.name, 703361169)
+        if (c.Id === 10000007) textMapCustom(ch.name, 3652968845)
         results.push(ch)
     }
     await aWriteData('characters', 'index', results)

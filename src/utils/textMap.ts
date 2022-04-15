@@ -1,10 +1,11 @@
 import { info } from 'npmlog'
 import { resolve } from 'path'
-import { ensureDir, readdir, readJSON } from 'fs-extra'
+import { readdir, readJSON } from 'fs-extra'
 
 import { giTextMap, aWriteData } from './source'
 
 export let usedTextMapIds = [] as number[]
+export let textmapCustom = {} as Record<number, number>
 export let cachedCNTextMap = {} as Record<string, string>
 let cachedCNLoaded = false
 let arrayMode = false
@@ -15,24 +16,29 @@ export function setArrayMode(use: boolean) {
 
 export function newTextMap() {
     usedTextMapIds = []
+    textmapCustom = {}
 }
 
 // only keep used ids
-export async function exportTextMap(module: string) {
+export async function exportTextMap(module: string, languages: string[]) {
     info('TXT', 'preparing textmap data [' + module + '] with length of', usedTextMapIds.length)
     const files = await readdir(giTextMap)
     let exported = 0
     for (const file of files) {
         const match = file.match(/TextMap([A-Z]*)\.json/)
         if (!match || !match[1]) continue
+        if (languages.length > 0 && !languages.includes(match[1])) continue
         const map = await readJSON(resolve(giTextMap, file))
         let minimizedMap = {} as Record<string, string> | string[]
         if (arrayMode) {
-            minimizedMap = usedTextMapIds.map((id) => map[Number(id).toString()])
+            minimizedMap = usedTextMapIds.map(
+                (id, index) => map[Number(textmapCustom[index] ? textmapCustom[index] : id).toString()],
+            )
         } else {
             minimizedMap = {} as Record<string, string>
             for (const id of usedTextMapIds) {
-                minimizedMap[Number(id).toString()] = map[Number(id).toString()]
+                minimizedMap[Number(id).toString()] =
+                    map[Number(textmapCustom[Number(id)] ? textmapCustom[Number(id)] : id).toString()]
             }
         }
         await aWriteData(module, 'TextMap-' + match[1], minimizedMap)
@@ -44,6 +50,10 @@ export async function exportTextMap(module: string) {
 export function textMap(id: number) {
     const len = usedTextMapIds.push(Number(id))
     return arrayMode ? len - 1 : Number(id)
+}
+
+export function textMapCustom(id: number, text: number) {
+    textmapCustom[id] = text
 }
 
 export async function loadCachedText() {

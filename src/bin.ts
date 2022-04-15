@@ -18,9 +18,10 @@ program
     .option('--textmap-as-array', 'Generate textmap as array')
     .option('-i, --input <dir>', 'Path of the GenshinData repo')
     .option('-o, --output <dir>', 'Path to save output data')
+    .option('-l, --language [languages...]', 'Languages to parse')
 
-program.parse()
-async function main() {
+async function main(argv?: string[]) {
+    program.parse(argv || process.argv)
     const options = program.opts()
     setPaths(options.input, options.output)
     if (options.textmapAsArray) {
@@ -34,6 +35,8 @@ async function main() {
             log.info('JOB', 'finished job', name)
         }
     }
-    await exportTextMap('TextMap')
+    await exportTextMap('TextMap', options.language)
 }
-main()
+if (require.main === module) {
+    main()
+}
