@@ -40,3 +40,4 @@ async function main(argv?: string[]) {
 if (require.main === module) {
     main()
 }
+module.exports = main
