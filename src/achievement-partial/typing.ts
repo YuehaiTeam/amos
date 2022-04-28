@@ -4,4 +4,4 @@ export interface IPartialAchievementItem {
     name: (string | number)[]
 }
 export type IPartialAchievement = IPartialAchievementItem[]
-export type IPartialAchievementList = Record<number, IPartialAchievement>
+export type IPartialAchievementList = Record<number|string, IPartialAchievement>
