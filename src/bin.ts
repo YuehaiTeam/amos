@@ -2,12 +2,14 @@ import log from 'npmlog'
 import { setArrayMode, exportTextMap } from './utils/textMap'
 import * as achievement from './achievement/index'
 import * as character from './character/index'
+import * as achievementPartial from './achievement-partial/index'
 import { cleanData, setPaths } from './utils/source'
 import { Command } from 'commander'
 log.heading = 'amos'
 const jobs = {
     achievement,
     character,
+    'achievement-partial': achievementPartial,
 }
 const program = new Command()
 
@@ -20,6 +22,12 @@ program
     .option('-o, --output <dir>', 'Path to save output data')
     .option('-l, --language [languages...]', 'Languages to parse')
 
+function toPascalCase(s: string) {
+    return s.replace(/[-_](.)/g, function (match, group1) {
+        return group1.toUpperCase()
+    })
+}
+
 async function main(argv?: string[]) {
     program.parse(argv || process.argv)
     const options = program.opts()
@@ -29,7 +37,7 @@ async function main(argv?: string[]) {
     }
     await cleanData()
     for (const [name, job] of Object.entries(jobs)) {
-        if (options[name]) {
+        if (options[name] || options[toPascalCase(name)]) {
             log.info('JOB', 'starting job', name)
             await job.main()
             log.info('JOB', 'finished job', name)

@@ -48,6 +48,7 @@ export async function exportTextMap(module: string, languages: string[]) {
 }
 
 export function textMap(id: number) {
+    if(usedTextMapIds.includes(id)) return usedTextMapIds.indexOf(id)
     const len = usedTextMapIds.push(Number(id))
     return arrayMode ? len - 1 : Number(id)
 }
