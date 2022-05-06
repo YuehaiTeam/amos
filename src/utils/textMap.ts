@@ -27,7 +27,7 @@ export async function exportTextMap(module: string, languages: string[]) {
     for (const file of files) {
         const match = file.match(/TextMap([A-Z]*)\.json/)
         if (!match || !match[1]) continue
-        if (languages.length > 0 && !languages.includes(match[1])) continue
+        if (languages && languages.length > 0 && !languages.includes(match[1])) continue
         const map = await readJSON(resolve(giTextMap, file))
         let minimizedMap = {} as Record<string, string> | string[]
         if (arrayMode) {

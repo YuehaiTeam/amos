@@ -26,14 +26,38 @@ export async function cleanData() {
     }
     await ensureDir(aData)
 }
+
+export function pascalCaseProxy(json: any): any {
+    if (!json || (typeof json !== 'object' && !Array.isArray(json))) return json
+    return new Proxy(json, {
+        get(target, prop) {
+            if (prop in target) {
+                return pascalCaseProxy(target[prop])
+            }
+            if (typeof prop === 'string') {
+                // 首字母大写转小写
+                let propLower = prop.substring(0, 1).toLowerCase() + prop.substring(1)
+                if (propLower in target) {
+                    return pascalCaseProxy(target[propLower])
+                }
+            }
+            return undefined
+        },
+    })
+}
+
 export function giExcelData(path: string) {
-    return readJson(resolve(giSource, 'ExcelBinOutput', `${path}ExcelConfigData.json`))
+    return readJson(resolve(giSource, 'ExcelBinOutput', `${path}ExcelConfigData.json`)).then((json) =>
+        pascalCaseProxy(json),
+    )
 }
 export function giBinData(sub: string, path: string) {
-    return readJson(resolve(giSource, 'BinOutput', sub, `${path}.json`))
+    return readJson(resolve(giSource, 'BinOutput', sub, `${path}.json`)).then((json) => pascalCaseProxy(json))
 }
 export function giObfBinData(sub: string, path: string) {
-    return readJson(resolve(giSource, '[Obfuscated] BinOutput', sub, `${path}.json`))
+    return readJson(resolve(giSource, '[Obfuscated] BinOutput', sub, `${path}.json`)).then((json) =>
+        pascalCaseProxy(json),
+    )
 }
 export async function aWriteData(module: string, path: string, data: any) {
     await ensureDir(resolve(aData, module))
