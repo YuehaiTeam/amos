@@ -120,7 +120,7 @@ export default {
         {
             id: 2470203,
             type: 'subtask',
-            name: [3179695812],
+            name: [210751628],
         },
         {
             id: 24802,
@@ -360,6 +360,86 @@ export default {
             id: 41260,
             type: 'task',
             name: [87683102],
+        },
+    ],
+    '84522': [
+        {
+            id: 2200601,
+            type: 'subtask',
+            name: [2682830857, ' - 1'],
+        },
+        {
+            id: 2200602,
+            type: 'task',
+            name: [2682830857, ' - 2'],
+        },
+        {
+            id: 2200603,
+            type: 'task',
+            name: [2682830857, ' - 3'],
+        },
+        {
+            id: 22009,
+            type: 'task',
+            name: [3432921022],
+        },
+    ],
+    '84530': [
+        {
+            id: 41160,
+            type: 'task',
+            name: [2887508775],
+        },
+        {
+            id: 41170,
+            type: 'task',
+            name: [3556318630],
+        },
+    ],
+    '84523': [
+        {
+            id: 25100,
+            type: 'task',
+            name: [394597366],
+        },
+        {
+            id: 28000,
+            type: 'task',
+            name: [3981548358],
+        },
+    ],
+    '84509': [
+        {
+            id: 26400,
+            type: 'task',
+            name: [3157855473],
+        },
+        {
+            id: 26500,
+            type: 'task',
+            name: [3688909073],
+        },
+    ],
+    '84542': [
+        {
+            id: 41330,
+            type: 'task',
+            name: [3082458623],
+        },
+        {
+            id: 41280,
+            type: 'task',
+            name: [1543583031],
+        },
+        {
+            id: 41290,
+            type: 'task',
+            name: [3854491798],
+        },
+        {
+            id: 22050,
+            type: 'quest',
+            name: [2984563549],
         },
     ],
 } as IPartialAchievementList
