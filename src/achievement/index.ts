@@ -46,13 +46,13 @@ export async function main() {
             async function getTasksFromQuest(questId: number) {
                 let quest0 = null as any
                 try {
-                    const quest = await giBinData('QuestBrief', questId.toString())
+                    const quest = await giBinData('Quest', questId.toString())
                     task = task || []
                     if (task.find((e) => e.questId === questId)) return null
                     quest0 = quest
                 } catch (e) {
                     try {
-                        const _quest = await giObfBinData('QuestBrief', questId.toString())
+                        const _quest = await giObfBinData('Quest', questId.toString())
                         if (Object.keys(keyMap).length <= 0) {
                             keyMap = await questKeyPair()
                         }
@@ -79,7 +79,7 @@ export async function main() {
                             taskId: quest0.taskID,
                             questId: quest0.id || questId,
                             type: quest0.type || '',
-                            name: quest0.titleTextMapHash || '',
+                            name: quest0.title || '',
                         })
                         quest.push(quest0)
                     }
@@ -116,9 +116,10 @@ export async function main() {
                             if (prev) {
                                 const prevId = Math.floor(Number(prev.param[0]) / 100)
                                 quest0 = await getTasksFromQuest(prevId)
-                                title = checkTextExist(Number(quest0.titleTextMapHash))
+                                if (!quest0) break
+                                title = checkTextExist(Number(quest0.title))
                                 if (title && !title.includes('$HIDDEN')) {
-                                    e.name = quest0.titleTextMapHash
+                                    e.name = quest0.title
                                     title = title
                                     e.taskId = e.taskId || quest0.taskID
                                 }
@@ -171,8 +172,8 @@ export async function main() {
     await aWriteData('achievements', 'index', finalData)
 }
 export async function questKeyPair() {
-    const q1 = await giBinData('QuestBrief', '22000')
-    const q2 = await giObfBinData('QuestBrief', '22000')
+    const q1 = await giBinData('Quest', '22000')
+    const q2 = await giObfBinData('Quest', '22000')
     const km = keyPair(q1, q2)
     info('QST', 'Finished rekey of quest', km)
     return km
