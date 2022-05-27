@@ -71,7 +71,7 @@ export async function main() {
                 // check for quest
                 const triggerList = a.TriggerConfig.ParamList.filter((e) => !!e)[0].split(',')
                 for (const t of triggerList) {
-                    const questId = Math.floor(Number(t) / 100)
+                    const questId = t.length > 5 ? Math.floor(Number(t) / 100) : Number(t)
                     const quest0 = await getTasksFromQuest(questId)
                     if (quest0) {
                         task = task || []
@@ -79,7 +79,7 @@ export async function main() {
                             taskId: quest0.taskID,
                             questId: quest0.id || questId,
                             type: quest0.type || '',
-                            name: quest0.title || '',
+                            name: quest0.titleTextMapHash || '',
                         })
                         quest.push(quest0)
                     }
