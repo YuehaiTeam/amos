@@ -8,6 +8,7 @@ export interface Achievement {
     preStage?: number
     postStage?: number
     categoryId: number
+    total: number
     trigger: {
         type: string
         task?: {

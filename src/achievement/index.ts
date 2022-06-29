@@ -154,6 +154,7 @@ export async function main() {
                 order: a.OrderId,
                 preStage: a.PreStageAchievementId || undefined,
                 postStage: postStage ? postStage.Id : undefined,
+                total: a.Progress,
                 trigger: {
                     type: a.TriggerConfig.TriggerType.replace('TRIGGER_', ''),
                     task,

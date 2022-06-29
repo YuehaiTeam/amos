@@ -2,11 +2,13 @@ import log from 'npmlog'
 import { setArrayMode, exportTextMap } from './utils/textMap'
 import * as achievement from './achievement/index'
 import * as character from './character/index'
+import * as artifact from './artifact/index'
 import * as achievementPartial from './achievement-partial/index'
 import { cleanData, setPaths } from './utils/source'
 import { Command } from 'commander'
 log.heading = 'amos'
 const jobs = {
+    artifact,
     achievement,
     character,
     'achievement-partial': achievementPartial,
