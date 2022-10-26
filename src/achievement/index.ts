@@ -10,6 +10,8 @@ import { keyPair, reKey } from '../utils/bruteforceJson'
 const deprecatedIds = [
     // dreprecated
     84027, 82011, 82016, 82018, 84517, 84521, 81006, 81007, 81008, 81009, 81011, 81012, 81013, 81219,
+    // 3.1 [废弃]
+    82152, 82153, 82154,
 ]
 export async function main() {
     let keyMap = {} as Record<string, string>
