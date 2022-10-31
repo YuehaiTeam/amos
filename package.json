@@ -1,24 +1,24 @@
 {
-    "name": "@yuehaiteam/amos",
-    "version": "1.0.0",
+    "name": "cocogoat-amos",
+    "description": "parser for GenshinData",
+    "version": "1.0.3",
     "main": "index.js",
     "author": "xiaoyu <7547189+xytoki@users.noreply.github.com>",
     "license": "MIT",
     "dependencies": {
         "commander": "^9.1.0",
         "fs-extra": "^10.0.1",
-        "npmlog": "^6.0.1",
+        "npmlog": "^6.0.1"
+    },
+    "devDependencies": {
         "typescript": "^4.6.3",
         "@types/fs-extra": "^9.0.13",
         "@types/node": "^17.0.23",
         "@types/npmlog": "^4.1.4"
     },
-    "devDependencies": {
-        "ts-node": "^10.7.0"
-    },
     "scripts": {
-        "amos": "ts-node src/bin",
-        "postinstall": "tsc"
+        "amos": "tsc && node dist/bin",
+        "build": "tsc"
     },
     "bin": {
         "amos": "dist/bin.js"
