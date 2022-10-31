@@ -7,6 +7,7 @@ import { giReward, ITEM_PRIMOGEM } from '../typings/giReward'
 import { giAchievement, giAchievementGoal } from '../typings/giAchievement'
 import { textMap, checkTextExist, loadCachedText } from '../utils/textMap'
 import { keyPair, reKey } from '../utils/bruteforceJson'
+import { giMainQuest } from '../typings/giQuest'
 const deprecatedIds = [
     // dreprecated
     84027, 82011, 82016, 82018, 84517, 84521, 81006, 81007, 81008, 81009, 81011, 81012, 81013, 81219,
@@ -20,6 +21,7 @@ export async function main() {
     const achievements = (await giExcelData('Achievement')) as giAchievement[]
     const cats = (await giExcelData('AchievementGoal')) as giAchievementGoal[]
     const dailyTask = (await giExcelData('DailyTask')) as giDailyTask[]
+    const mainQuest = (await giExcelData('MainQuest')) as giMainQuest[]
     info('ACH', 'Found', achievements.length, 'achievements and', cats.length, 'categories')
     const finalData = [] as AchievementCategory[]
     for (const cat of cats) {
@@ -73,17 +75,30 @@ export async function main() {
                 // check for quest
                 const triggerList = a.TriggerConfig.ParamList.filter((e) => !!e)[0].split(',')
                 for (const t of triggerList) {
-                    const questId = t.length > 5 ? Math.floor(Number(t) / 100) : Number(t)
-                    const quest0 = await getTasksFromQuest(questId)
+                    const subQuestId = Number(t)
+                    const mainQuestId = t.length > 5 ? Math.floor(subQuestId / 100) : subQuestId
+                    const quest0 = mainQuest.find((e) => e.id === mainQuestId)
                     if (quest0) {
                         task = task || []
                         task.push({
-                            taskId: quest0.taskID,
-                            questId: quest0.id || questId,
+                            taskId: quest0.taskID || 0,
+                            questId: quest0.id,
                             type: quest0.type || '',
-                            name: quest0.titleTextMapHash || '',
+                            name: quest0.titleTextMapHash,
                         })
                         quest.push(quest0)
+                    } else {
+                        const quest0 = await getTasksFromQuest(mainQuestId)
+                        if (quest0) {
+                            task = task || []
+                            task.push({
+                                taskId: quest0.taskID,
+                                questId: quest0.id || mainQuestId,
+                                type: quest0.type || '',
+                                name: quest0.titleTextMapHash || '',
+                            })
+                            quest.push(quest0)
+                        }
                     }
                 }
             }
