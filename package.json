@@ -1,5 +1,5 @@
 {
-    "name": "cocogoat-amos",
+    "name": "@yuehaiteam/amos",
     "description": "parser for GenshinData",
     "version": "1.0.3",
     "main": "index.js",
