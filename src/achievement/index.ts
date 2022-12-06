@@ -179,12 +179,41 @@ export async function main() {
                 },
             })
         }
+        interface AchWithChildren extends Achievement {
+            child?: AchWithChildren
+            removed?: boolean
+        }
+        // convert achs to tree
+        const achsTree = achs
+            .reduce((acc: AchWithChildren[], cur: AchWithChildren) => {
+                if (cur.preStage) {
+                    const parent = acc.find((e) => e.id === cur.preStage)
+                    if (parent) {
+                        parent.child = cur
+                        cur.removed = true
+                    }
+                }
+                acc.push(cur)
+                return acc
+            }, [] as AchWithChildren[])
+            .filter((e) => !e.removed)
+            .sort((a, b) => a.order - b.order)
+        // put child back after parent
+        for (let i = 0; i < achsTree.length; i++) {
+            const ach = achsTree[i]
+            delete ach.removed
+            if (ach.child) {
+                achsTree.splice(i + 1, 0, ach.child)
+                delete ach.child
+            }
+        }
+        const achsFinal = achsTree as Achievement[]
         finalData.push({
             id: cat.Id || 0,
             key: achievementKeys[cat.Id || 0] || '',
             name: textMap(cat.NameTextMapHash),
             order: cat.OrderId,
-            achievements: achs.sort((a, b) => a.order - b.order),
+            achievements: achsFinal,
             totalReward,
         })
     }
