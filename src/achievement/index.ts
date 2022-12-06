@@ -5,7 +5,7 @@ import { Achievement, AchievementCategory } from './typing'
 import { giDailyTask } from '../typings/giTask'
 import { giReward, ITEM_PRIMOGEM } from '../typings/giReward'
 import { giAchievement, giAchievementGoal } from '../typings/giAchievement'
-import { textMap, checkTextExist, loadCachedText } from '../utils/textMap'
+import { textMap, checkTextExist, loadCachedText, checkTextIncludesTest } from '../utils/textMap'
 import { keyPair, reKey } from '../utils/bruteforceJson'
 import { giMainQuest } from '../typings/giQuest'
 const deprecatedIds = [
@@ -30,7 +30,8 @@ export async function main() {
             (a) =>
                 !deprecatedIds.includes(a.Id) &&
                 (a.GoalId || 0) === (cat.Id || 0) &&
-                checkTextExist(a.TitleTextMapHash),
+                checkTextExist(a.TitleTextMapHash) &&
+                !checkTextIncludesTest(a.TitleTextMapHash),
         )
         const achs = [] as Achievement[]
         for (const a of catAchs) {

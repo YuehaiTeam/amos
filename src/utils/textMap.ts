@@ -70,3 +70,12 @@ export function checkTextExist(id: number) {
     if (cachedCNTextMap[id] && cachedCNTextMap[id].trim() !== '') return cachedCNTextMap[id].trim()
     return false
 }
+export function checkTextIncludesTest(id: number) {
+    const test = ['（test）', '(test)', '（测试）', '(测试)']
+    if (cachedCNTextMap[id]) {
+        for (const t of test) {
+            if (cachedCNTextMap[id].includes(t)) return true
+        }
+    }
+    return false
+}
