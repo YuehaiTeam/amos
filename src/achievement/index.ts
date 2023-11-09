@@ -29,7 +29,7 @@ export async function main() {
         const catAchs = achievements.filter(
             (a) =>
                 !deprecatedIds.includes(a.Id) &&
-                !a.isDisuse &&
+                !a.IsDisuse &&
                 (a.GoalId || 0) === (cat.Id || 0) &&
                 checkTextExist(a.TitleTextMapHash) &&
                 !checkTextIncludesTest(a.TitleTextMapHash),
