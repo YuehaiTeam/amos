@@ -33,7 +33,7 @@ export async function main() {
                 return {
                     id: e,
                     name: textMap(sub.nameTextMapHash),
-                    type: sub.equipType.replace('EQUIP_', '') as IArtifactType,
+                    type: sub.equipType.toUpperCase().replace('EQUIP_', '') as IArtifactType,
                     setId: setId,
                     setIdx: Number(sub.icon.split(`${setId}_`)[1]),
                     qualities,
