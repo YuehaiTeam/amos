@@ -77,7 +77,9 @@ export async function main() {
             }
             if (
                 a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_OR' ||
-                a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_AND'
+                a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_AND' ||
+                a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_PARENT_QUEST_OR' ||
+                a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_PARENT_QUEST_AND'
             ) {
                 // check for quest
                 const triggerList = a.TriggerConfig.ParamList.filter((e) => !!e)[0].split(',')
