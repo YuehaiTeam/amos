@@ -40,14 +40,13 @@ export function pascalCaseProxy(json: any): any {
                 if (propLower in target) {
                     return pascalCaseProxy(target[propLower])
                 }
+                // 小写转大写
+                let propUpper = prop.substring(0, 1).toUpperCase() + prop.substring(1);
+                if (propUpper in target) {
+                    return pascalCaseProxy(target[propUpper]);
+                }
                 // id Id ID
                 if(prop.toLowerCase()==="id"){
-                    if ('id' in target) {
-                        return pascalCaseProxy(target['id'])
-                    }
-                    if ('Id' in target) {
-                        return pascalCaseProxy(target['Id'])
-                    }
                     if ('ID' in target) {
                         return pascalCaseProxy(target['ID'])
                     }
