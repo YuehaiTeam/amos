@@ -40,6 +40,18 @@ export function pascalCaseProxy(json: any): any {
                 if (propLower in target) {
                     return pascalCaseProxy(target[propLower])
                 }
+                // id Id ID
+                if(prop.toLowerCase()==="id"){
+                    if ('id' in target) {
+                        return pascalCaseProxy(target['id'])
+                    }
+                    if ('Id' in target) {
+                        return pascalCaseProxy(target['Id'])
+                    }
+                    if ('ID' in target) {
+                        return pascalCaseProxy(target['ID'])
+                    }
+                }
             }
             return undefined
         },
