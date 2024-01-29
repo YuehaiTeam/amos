@@ -8,7 +8,7 @@ import { giAchievement, giAchievementGoal } from '../typings/giAchievement'
 import { textMap, checkTextExist, loadCachedText, checkTextIncludesTest } from '../utils/textMap'
 import { keyPair, reKey } from '../utils/bruteforceJson'
 import { giMainQuest } from '../typings/giQuest'
-const camelToSnake = (str:string):string => str.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
+const camelToSnake = (str: string): string => str.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
 const deprecatedIds = [
     // dreprecated
     84027, 82011, 82016, 82018, 84517, 84521, 81006, 81007, 81008, 81009, 81011, 81012, 81013, 81219,
@@ -67,11 +67,14 @@ export async function main() {
                         task = task || []
                         if (task.find((e) => e.questId === questId)) return null
                         quest0 = quest
-                    } catch (e) {}
+                    } catch (e) { }
                 }
                 return quest0
             }
             a.TriggerConfig.TriggerType = camelToSnake(a.TriggerConfig.TriggerType)
+            if (!a.TriggerConfig.TriggerType.startsWith('TRIGGER_')) {
+                a.TriggerConfig.TriggerType = 'TRIGGER_' + a.TriggerConfig.TriggerType
+            }
             if (
                 a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_OR' ||
                 a.TriggerConfig.TriggerType === 'TRIGGER_FINISH_QUEST_AND'
@@ -160,6 +163,7 @@ export async function main() {
                     }
                     index++
                 }
+
                 task = task.filter((e, i) => {
                     return !strips.includes(i)
                 })
