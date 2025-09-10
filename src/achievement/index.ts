@@ -138,7 +138,7 @@ export async function main() {
                         if (quest0.subQuests?.length > 0) {
                             // currently only available for deobfuscated quests
                             const subs = quest0.subQuests.concat([]).sort((a: any, b: any) => a.order - b.order)
-                            const prev = subs[0].acceptCond.find((s: any) => s.type === 'QUEST_COND_STATE_EQUAL')
+                            const prev = subs[0].acceptCond?.find((s: any) => s.type === 'QUEST_COND_STATE_EQUAL')
                             if (prev) {
                                 const prevId = Math.floor(Number(prev.param[0]) / 100)
                                 quest0 = await getTasksFromQuest(prevId)
